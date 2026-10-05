@@ -27,6 +27,32 @@ if !exists("g:os")
   endif
 endif
 
+" stops the running csound process and closes its window
+function! CsoundStop() abort
+  let l:stopped = 0
+  for l:w in getwininfo()
+    let l:buf = winbufnr(l:w.winid)
+    if l:buf > 0 && getbufvar(l:buf, '&buftype') ==# 'terminal'
+      let l:job = getbufvar(l:buf, 'terminal_job_id', 0)
+      if l:job > 0
+        call chansend(l:job, "\003")
+        sleep 200m
+        call jobstop(l:job)
+        let l:stopped = 1
+      endif
+      execute win_execute(l:w.winid, 'bwipeout!')
+    endif
+  endfor
+  if !l:stopped
+    echohl WarningMsg
+    echomsg 'csound-vim: no running csound to stop'
+    echohl None
+  endif
+endfunction
+
+" load macros from a file
+let mycsound_macros=globpath(&rtp, "macros/mycsound_macros")
+
 " open the manual page for the opcode under the cursor
 function! OpenManual()
   if !exists ("g:csound_manual")
