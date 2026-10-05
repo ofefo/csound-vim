@@ -37,7 +37,7 @@ function! OpenManual()
   let opcode = expand("<cword>")
   let manual_page = manual_dir . "/" . opcode . ".html"
   if g:os == "Linux"
-    execute "!xdg-open" manual_page "&"
+    execute "!xdg-open " . shellescape(manual_page) . " &"
   elseif g:os == "OSX"
     execute "!open" manual_page
   elseif g:os == "Windows"
