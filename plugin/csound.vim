@@ -32,24 +32,34 @@ function! OpenManual()
   if !exists ("g:csound_manual")
     let manual_dir = "http://csound.github.io/docs/manual/"
   else
-    let manual_dir = resolve(expand(g:csound_manual)) 
+    let manual_dir = resolve(expand(g:csound_manual))
   endif
   let opcode = expand("<cword>")
   let manual_page = manual_dir . "/" . opcode . ".html"
   if g:os == "Linux"
-    execute "!xdg-open " . shellescape(manual_page) . " &"
+    let l:cmd = 'xdg-open ' . shellescape(manual_page)
   elseif g:os == "OSX"
-    execute "!open" manual_page
+    let l:cmd = 'open ' . shellescape(manual_page)
   elseif g:os == "Windows"
-    execute "!start cmd /c start" manual_page
+    let l:cmd = 'start cmd /c start "" ' . shellescape(manual_page)
   elseif g:os == "Mingw"
-    execute "!start" manual_page
+    let l:cmd = 'start "" ' . shellescape(manual_page)
   elseif g:os == "Haiku"
-    execute "!open" manual_page
+    let l:cmd = 'open ' . shellescape(manual_page)
   else
-    echo "sorry, cannot detect your OS"
-    echo "try setting the variable g:os in your .vimrc"
-    echo 'valid strings are "Linux" "OSX" "Windows", "Mingw" and "Haiku"'
+    echohl ErrorMsg
+    echomsg 'csound-vim: cannot detect your OS; set g:os in your vimrc'
+    echohl None
+    return
+  endif
+  echomsg 'csound-vim: ' . l:cmd
+  let l:out = system(l:cmd . ' 2>&1')
+  if v:shell_error
+    echohl ErrorMsg
+    echomsg 'csound-vim: failed (exit ' . v:shell_error . ') ' . l:out
+    echohl None
+  elseif l:out =~# '\S'
+    echomsg 'csound-vim: ' . l:out
   endif
 endfunction
 
@@ -74,6 +84,6 @@ if !exists('g:csound_enable_manual_keys')
 	let g:csound_enable_manual_keys = 1
 endif
 if g:csound_enable_manual_keys
-	noremap <F1> :call OpenManual()<CR><CR>
+	noremap <F1> :call OpenManual()<CR>
 	noremap <F2> :call OpenExample()<CR>
 endif
