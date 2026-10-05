@@ -78,15 +78,7 @@ function! OpenManual()
     echohl None
     return
   endif
-  echomsg 'csound-vim: ' . l:cmd
-  let l:out = system(l:cmd . ' 2>&1')
-  if v:shell_error
-    echohl ErrorMsg
-    echomsg 'csound-vim: failed (exit ' . v:shell_error . ') ' . l:out
-    echohl None
-  elseif l:out =~# '\S'
-    echomsg 'csound-vim: ' . l:out
-  endif
+  execute '!' . l:cmd . ' &'
 endfunction
 
 " open the example csd for the opcode under the cursor

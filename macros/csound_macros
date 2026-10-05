@@ -21,6 +21,8 @@ if has('nvim')
     " plays last compiled file
     :noremap <F12> :vsplit <CR> :terminal aplay "%:p:r.wav" <CR><CR>
 elseif has('gui_running')
+    " stops the running csound process and closes its window
+    :noremap <F7> :call CsoundStop()<CR>
     " saves present file, compiles with flags in options, returns to vim
     :noremap <F8> :up <CR> :terminal csound "%:p" <CR>
     " saves present file, compiles and sends to audio output, returns to vim
@@ -32,6 +34,8 @@ elseif has('gui_running')
     " plays last compiled file
     :noremap <F12> :terminal aplay "%:p:r.wav" <CR><CR>
 else 
+    " stops the running csound process and closes its window
+    :noremap <F7> :call CsoundStop()<CR>
     " saves present file, compiles with flags in options, returns to vim
     :noremap <F8> :up <CR> :!csound "%:p" <CR>
     " saves present file, compiles and sends to audio output, returns to vim
